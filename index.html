@@ -176,6 +176,17 @@
     .action-give_up   { background: #3d1f1f; color: #ff7070; }
     .action-stay      { background: #1f3020; color: #6acc70; }
 
+    .decision-narrative {
+      font-size: 0.78rem;
+      color: #7a8098;
+      background: #13151f;
+      border-left: 3px solid #2e3148;
+      border-radius: 4px;
+      padding: 7px 10px;
+      margin: 8px 0 4px;
+      line-height: 1.5;
+    }
+
     /* ── Bars ── */
     .bars { margin-top: 14px; }
     .bar-row { margin-bottom: 8px; }
@@ -577,10 +588,10 @@
 
       <h2>7. Results — Mixed Population</h2>
       <p>
-        When all three strategies compete simultaneously (2 agents per strategy, 6 total):
+        When all three strategies compete simultaneously (2 agents per strategy, 6 total, 500 ticks, 10 seeds):
       </p>
       <table>
-        <tr><th>Strategy</th><th>Mean Reward (mean ± std)</th><th>Win Rate</th><th>Starvation</th></tr>
+        <tr><th>Strategy</th><th>Mean Reward</th><th>Win Rate</th><th>Starvation</th></tr>
         <tr><td><strong style="color:#e8a838">Priority Aging</strong></td><td>2028.8 ± 563</td><td>0.406 ± 0.113</td><td>0.000</td></tr>
         <tr><td><strong style="color:#e05c5c">Exp Backoff</strong></td><td>1221.3 ± 450</td><td>0.474 ± 0.065</td><td>0.000</td></tr>
         <tr><td><strong style="color:#4a90d9">Emotion</strong></td><td>694.0 ± 106</td><td>0.397 ± 0.001</td><td>0.000</td></tr>
@@ -599,23 +610,157 @@
         contract</em>: it produces optimal fairness when all agents participate, but it is exploitable
         by purely self-interested strategies.
       </p>
+
+      <h2>8. Pairwise Matchups</h2>
       <p>
-        This finding mirrors cooperation dynamics studied in evolutionary game theory, where cooperative
-        strategies can be invaded and exploited by defectors unless enforcement or critical mass prevents it.
+        To isolate each head-to-head dynamic, we ran every pair of strategies in a dedicated
+        simulation (3 agents each, 500 ticks, 10 seeds). This separates the cooperator-defector
+        problem from three-way interaction effects.
+      </p>
+      <table>
+        <tr><th>Matchup</th><th>Overall Fairness</th><th>Strategy</th><th>Mean Reward</th><th>Win Rate</th><th>Starvation</th></tr>
+        <tr>
+          <td rowspan="2"><strong>Emotion vs Emotion</strong></td>
+          <td rowspan="2">0.940 ± 0.023</td>
+          <td><strong style="color:#4a90d9">Emotion</strong></td><td>1295.5 ± 2.9</td><td>0.410 ± 0.002</td><td>0.000</td>
+        </tr>
+        <tr>
+          <td><strong style="color:#4a90d9">Emotion</strong></td><td>1295.5 ± 2.9</td><td>0.410 ± 0.002</td><td>0.000</td>
+        </tr>
+        <tr>
+          <td rowspan="2"><strong>PA vs Backoff</strong></td>
+          <td rowspan="2">0.757 ± 0.100</td>
+          <td><strong style="color:#e8a838">Priority Aging</strong></td><td>1224.5 ± 383.9</td><td>0.246 ± 0.078</td><td>0.000</td>
+        </tr>
+        <tr>
+          <td><strong style="color:#e05c5c">Exp Backoff</strong></td><td>1299.3 ± 342.1</td><td>0.491 ± 0.049</td><td>0.000</td>
+        </tr>
+        <tr>
+          <td rowspan="2"><strong>PA vs Emotion</strong></td>
+          <td rowspan="2">0.808 ± 0.088</td>
+          <td><strong style="color:#e8a838">Priority Aging</strong></td><td>1540.7 ± 115.7</td><td>0.310 ± 0.024</td><td>0.000</td>
+        </tr>
+        <tr>
+          <td><strong style="color:#4a90d9">Emotion</strong></td><td>884.6 ± 79.1</td><td>0.398 ± 0.001</td><td>0.000</td>
+        </tr>
+        <tr>
+          <td rowspan="2"><strong>Backoff vs Emotion</strong></td>
+          <td rowspan="2">0.539 ± 0.088</td>
+          <td><strong style="color:#e05c5c">Exp Backoff</strong></td><td>1845.7 ± 218.4</td><td>0.532 ± 0.035</td><td>0.000</td>
+        </tr>
+        <tr>
+          <td><strong style="color:#4a90d9">Emotion</strong></td><td>848.8 ± 189.3</td><td>0.389 ± 0.015</td><td>0.000</td>
+        </tr>
+      </table>
+      <p>
+        Two cross-cutting patterns emerge from this table. First, <strong>PA vs Backoff is nearly
+        matched on reward (1224 vs 1299) but not on win rate (0.246 vs 0.491)</strong>. Priority aging
+        wins rarely but concentrates wins at tier 1 (10 pts); backoff wins almost twice as often but
+        at lower-value tiers. Back-calculating average reward per win: PA earns ~9.9 pts/win vs
+        backoff's ~5.3 — opposite strategies, similar totals.
+      </p>
+      <p>
+        Second, <strong>PA vs Emotion shows the reverse: matched win rates (0.310 vs 0.398) but
+        wildly different rewards (1540 vs 884)</strong>. Emotion agents win slightly more often than
+        priority aging, but almost always at tier 2 or tier 3. Priority aging's wins are almost
+        exclusively tier 1. Win rate measures frequency, not quality — the same number of wins can
+        produce very different reward totals depending on which tier they land on.
       </p>
 
-      <h2>8. Discussion</h2>
+      <h2>9. The Role of Reward Tiers</h2>
+      <p>
+        The win rate vs reward asymmetry raises a question: how much of the mixed-population results
+        are driven by tier premiums amplifying selfish strategies, rather than those strategies being
+        intrinsically superior? To test this, we ran the same pairwise matchups with flat rewards
+        (all tiers pay 5 pts), so that win frequency is the only thing that matters.
+      </p>
+      <table>
+        <tr><th>Matchup</th><th>Fairness (Tiered)</th><th>Fairness (Flat)</th><th>Reward winner changes?</th></tr>
+        <tr><td>Emotion vs Emotion</td><td>0.940</td><td><strong>0.999</strong></td><td>No — tied both ways</td></tr>
+        <tr><td>PA vs Backoff</td><td>0.757</td><td>0.818</td><td><strong>Yes</strong> — backoff wins clearly (614 vs 1227)</td></tr>
+        <tr><td>PA vs Emotion</td><td>0.808</td><td>0.917</td><td><strong>Yes</strong> — emotion wins (773 vs 995)</td></tr>
+        <tr><td>Backoff vs Emotion</td><td>0.539</td><td>0.853</td><td>No — backoff still wins (1330 vs 972)</td></tr>
+      </table>
+      <p>
+        Removing tier premiums reveals that <strong>priority aging's reward advantage over emotion
+        agents is entirely an artifact of tier concentration</strong>. When all wins are equal value,
+        emotion agents beat priority aging — because they win more often. Priority aging's strategy
+        of queuing for tier 1 only pays off because tier 1 is worth 5× tier 3. Remove that premium
+        and the strategy is exposed as low-frequency.
+      </p>
+      <p>
+        Emotion vs Emotion improves from 0.940 to 0.999 under flat rewards — essentially perfect
+        fairness. The last source of inequality in the homogeneous condition was the tier premium
+        compounding skill-level differences. Flatten rewards and the system reaches near-perfect
+        equity.
+      </p>
+      <p>
+        Backoff still outperforms emotion agents even with flat rewards, confirming that backoff is
+        genuinely better at accumulating wins across tiers — its mechanical tier-scanning is more
+        efficient than emotion's frustration-driven, probabilistic tier migration.
+      </p>
+
+      <h2>10. Social Yielding as a Liability in Mixed Populations</h2>
+      <p>
+        The social cost mechanic was designed to make dominant emotion agents voluntarily yield to
+        reduce system-level inequality. It works unconditionally — the agent backs off regardless
+        of whether its neighbors will reciprocate. In a homogeneous emotion population this is fine;
+        everyone yields when dominating. In a mixed population it is a unilateral disarmament.
+      </p>
+      <p>
+        We tested this directly by running all pairwise matchups with social awareness disabled
+        (emotion agents still use frustration and learning, but the social cost yield is turned off):
+      </p>
+      <table>
+        <tr><th>Matchup</th><th>Fairness (Social ON)</th><th>Fairness (Social OFF)</th><th>Emotion Reward ON</th><th>Emotion Reward OFF</th></tr>
+        <tr><td>Emotion vs Emotion</td><td>0.940</td><td>0.940</td><td>1295</td><td>1288</td></tr>
+        <tr><td>PA vs Emotion</td><td>0.808</td><td><strong>0.860</strong></td><td>884</td><td><strong>1069</strong> (+21%)</td></tr>
+        <tr><td>Backoff vs Emotion</td><td>0.539</td><td><strong>0.699</strong></td><td>848</td><td><strong>1203</strong> (+42%)</td></tr>
+      </table>
+      <p>
+        Disabling social yielding strictly improves emotion agents' outcomes against both selfish
+        strategies — without any cost in the cooperative case. Emotion vs Emotion fairness is
+        identical (0.940 both ways), meaning the social cost mechanic contributes nothing when both
+        sides are already cooperative. The frustration dynamics and give_up tier migration alone
+        are sufficient to produce fair outcomes among emotion agents.
+      </p>
+      <p>
+        Against backoff, disabling social yielding closes the reward gap from 2.2× to 1.2×, and
+        fairness improves from 0.539 to 0.699. Against priority aging, the reward gap narrows
+        from 1.74× to 1.20× and fairness improves from 0.808 to 0.860.
+      </p>
+      <p>
+        This suggests a design refinement: <strong>social yielding should be conditional on
+        detecting cooperative neighbors, not unconditional</strong>. An emotion agent that can
+        identify whether its competitors are also using emotional regulation could activate the
+        social cost mechanic only when cooperation will be reciprocated. This is analogous to
+        tit-for-tat strategies in iterated prisoner's dilemma — cooperate by default, but stop
+        cooperating when facing a defector.
+      </p>
+
+      <h2>11. Discussion</h2>
       <p>
         The results support a nuanced conclusion. Emotion-based regulation is not simply better or worse
         than classical approaches — it is context-dependent. In a uniform population, it achieves
         near-optimal fairness and zero starvation with full interpretability. In a mixed population, its
-        cooperative nature is exploited by selfish strategies, and it falls to last place on raw reward.
+        cooperative nature is exploited by selfish strategies, and it falls to last place on raw reward —
+        though disabling unconditional social yielding closes much of that gap.
       </p>
       <p>
-        This suggests that the value of emotion-based regulation depends on the adoption rate. A system
-        where all participants use emotional regulation produces fairer outcomes than any classical
-        baseline. A system where only some agents use it may produce worse outcomes for those agents
-        than if they had used a simpler, more aggressive strategy.
+        The pairwise analysis reveals that priority aging's dominance in mixed populations is largely
+        a tier-premium effect, not intrinsic competitiveness. Emotion agents win more ticks than
+        priority aging in head-to-head competition; they simply win at lower-value tiers. Backoff is
+        the more genuine threat — it outperforms emotion agents even under flat rewards because its
+        mechanical tier-scanning is faster and more consistent than emotion's probabilistic response.
+      </p>
+      <p>
+        It is also worth noting that much of the emotion agent behavior is design-driven rather than
+        emergent. The give_up action, social cost yield, and bid-formula handicap are all explicit
+        design choices that prioritize fairness over reward maximization. Comparing emotion agent
+        rewards to selfish strategies is comparing a cooperative strategy against defectors — a context
+        in which cooperative strategies are expected to earn less. The more meaningful question is
+        whether the system-level fairness and starvation outcomes justify the individual cost of
+        cooperation, and in homogeneous conditions the answer is clearly yes.
       </p>
       <p>
         The interpretability of the system is a significant advantage regardless of fairness outcomes.
@@ -624,7 +769,7 @@
         of why a particular agent was favored.
       </p>
 
-      <h2>9. Limitations</h2>
+      <h2>12. Limitations</h2>
       <ul>
         <li><strong>Priority aging is untuned.</strong> The aging rate (0.08 per tick) and MLFQ
           demotion thresholds (8 and 20 ticks) were set without parameter search. A tuned version
@@ -642,23 +787,109 @@
           cooperative behavior against exploitation — analogous to mechanism design in game theory.</li>
       </ul>
 
-      <h2>10. How to Run</h2>
-      <pre>
-# Homogeneous experiment (6 agents, 200 ticks, 10 seeds)
-python run.py
+      <h2>13. Literature Review</h2>
 
-# More ticks, more seeds
-python run.py --ticks 500 --seeds 20
+      <p><strong>Emotion and Affect in Artificial Agents</strong></p>
+      <ul>
+        <li><strong>Picard, R. W. (1997). <em>Affective Computing</em>. MIT Press.</strong><br>
+          Picard's foundational text argues that emotion functions as an internal regulatory mechanism,
+          not merely a communication signal. This project draws on that regulatory view: frustration,
+          reward reinforcement, and social cost are control variables that modulate bidding and tier
+          selection — not outputs displayed to other agents.</li>
+        <li><strong>Ortony, A., Clore, G. L., &amp; Collins, A. (1988). <em>The Cognitive Structure of Emotions</em>. Cambridge University Press.</strong><br>
+          The OCC model grounds emotions in goal-relative appraisals. Frustration under OCC arises
+          from undesirable outcomes relative to expectations, and carries dual action tendencies:
+          persistence or withdrawal. This maps directly onto the try_harder / give_up decision
+          split implemented here, giving the emotional variables a theoretically grounded basis.</li>
+        <li><strong>Velásquez, J. D. (1997). Modeling emotions and other motivations in synthetic agents. <em>AAAI-97</em>, pp. 10–15.</strong><br>
+          Velásquez proposes parallel emotion processes that compete to influence behavior based on
+          intensity, with behavior under arousal being probabilistic rather than deterministic. This
+          maps directly onto the three-way frustrated decision (try_harder / give_up / stay) sampled
+          from learned probability weights that shift with experience.</li>
+        <li><strong>Gratch, J., &amp; Marsella, S. (2004). A domain-independent framework for modeling emotion. <em>Cognitive Systems Research</em>, 5(4), 269–306.</strong><br>
+          EMA distinguishes problem-focused coping (change the situation) from emotion-focused coping
+          (accept a reduced goal). An agent increasing speed when frustrated is problem-focused;
+          one dropping to a lower tier is emotion-focused. EMA also requires full auditability of
+          emotional state at each step — directly aligned with this project's interpretability requirement.</li>
+        <li><strong>Bates, J. (1994). The role of emotion in believable agents. <em>Communications of the ACM</em>, 37(7), 122–125.</strong><br>
+          Bates argues that even simple emotional dynamics produce qualitatively richer, more
+          understandable behavior than purely reactive systems. Agents whose behavior changes in
+          traceable response to accumulated emotional state are more interpretable than fixed-rule
+          agents, because state history explains current choices.</li>
+      </ul>
 
-# Single seed with per-agent explanations
-python run.py --seed 42 --explain
+      <p><strong>Fairness and Resource Allocation</strong></p>
+      <ul>
+        <li><strong>Jain, R., Chiu, D., &amp; Hawe, W. (1984). A quantitative measure of fairness and discrimination for resource allocation in shared computer systems. <em>DEC Technical Report TR-301</em>.</strong><br>
+          Introduces Jain's Fairness Index J = (Σxᵢ)² / (n · Σxᵢ²), the primary evaluation metric
+          used here. The index satisfies population-size independence, scale independence,
+          boundedness, and continuity — enabling fair comparison across conditions with different
+          agent counts and reward levels.</li>
+        <li><strong>Corbató, F. J., Merwin-Daggett, M., &amp; Daley, R. C. (1962). An experimental time-sharing system. <em>AFIPS Spring Joint Computer Conference</em>, 21, 335–344.</strong><br>
+          Introduces CTSS, the conceptual ancestor of multi-level feedback queue scheduling and the
+          priority aging baseline used here. The key insight — demote processes that consume resources
+          without yielding — is adapted inversely: priority accumulates when an agent is not winning
+          and resets on a win, preventing starvation by eventually elevating waiting agents.</li>
+        <li><strong>Metcalfe, R. M., &amp; Boggs, D. R. (1976). Ethernet: Distributed packet switching for local computer networks. <em>Communications of the ACM</em>, 19(7), 395–404.</strong><br>
+          Introduces binary exponential backoff for collision resolution — the direct inspiration for
+          the backoff baseline. Consecutive losses trigger exponentially longer waits, adapted here
+          to multi-tier competition with progressive tier demotion. The protocol was designed for
+          throughput, not fairness, which explains the backoff baseline's poor Jain score.</li>
+      </ul>
 
-# Mixed population experiment
-python run_mixed.py
+      <p><strong>Multi-Agent Systems and Cooperation</strong></p>
+      <ul>
+        <li><strong>Shoham, Y., &amp; Leyton-Brown, K. (2009). <em>Multiagent Systems</em>. Cambridge University Press.</strong><br>
+          Provides the mechanism design framing for the mixed population failure: social cost yielding
+          was designed assuming all participants use emotional regulation, but in a mixed population,
+          "never yield" is a dominant strategy for self-interested agents. The voluntary yielding
+          mechanism is exploitable precisely because it is unconditional.</li>
+        <li><strong>Axelrod, R. (1984). <em>The Evolution of Cooperation</em>. Basic Books.</strong><br>
+          Shows that cooperative strategies are stable in repeated games when agents can condition
+          on opponent history (tit-for-tat), but are exploited by unconditional defectors. The
+          mixed population results replicate this exactly. Axelrod's finding directly motivates the
+          design refinement identified here: social yielding should be conditional on detecting a
+          cooperative opponent, not unconditional.</li>
+        <li><strong>Nowak, M. A. (2006). Five rules for the evolution of cooperation. <em>Science</em>, 314(5805), 1560–1563.</strong><br>
+          Synthesizes five mechanisms for stable cooperation. The mixed population scenario fails on
+          direct reciprocity (no opponent-conditioned behavior) and group selection (no selection
+          pressure for cooperator clusters). Nowak's network reciprocity condition — cooperation
+          is stable when cooperators cluster — is consistent with the homogeneous emotion results
+          showing 0.94 fairness: when all agents cooperate, the social contract holds.</li>
+      </ul>
 
-# Regenerate simulation data for this website
-python export_json.py --ticks 200</pre>
-      <p>Requires Python 3.8+ and matplotlib. No other dependencies.</p>
+      <h2>14. How to Run</h2>
+      <p>Requires Python 3.8+ and <code>matplotlib</code>. No other dependencies.</p>
+      <pre>pip install matplotlib</pre>
+
+      <p><strong>Quickest demo — single seed with per-agent decision explanations printed each tick:</strong></p>
+      <pre>python run.py --seed 42 --explain</pre>
+      <p>This prints a full breakdown for every agent every tick, e.g.:</p>
+      <pre>Agent 3 | tick decision:
+  target tier  : 1
+  speed used   : 0.7  (bid=0.367)
+  frustration  : 0.35 (before) → 0.20 (after)  |  action: try_harder
+  reinforcement: 0.99   social_cost: 0.0
+  weights      : try_harder=0.353  give_up=0.561  stay=0.087
+  energy       : 92.5 / 100.0
+  outcome      : WON  reward=10</pre>
+
+      <p><strong>Full homogeneous experiment (all 7 conditions, 10 seeds, plots saved to results/):</strong></p>
+      <pre>python run.py --ticks 500 --seeds 10</pre>
+
+      <p><strong>Mixed population experiment (all strategies compete head-to-head):</strong></p>
+      <pre>python run_mixed.py --ticks 500 --seeds 10</pre>
+
+      <p><strong>Regenerate the simulation data for this interactive website:</strong></p>
+      <pre>python export_json.py --ticks 200
+# then open index.html in a browser</pre>
+
+      <p><strong>On the Zoo (Yale HPC):</strong></p>
+      <pre>ssh netid@zoo.cs.yale.edu
+git clone https://github.com/yourusername/emotion-agents.git
+cd emotion-agents
+pip install --user matplotlib
+python run.py --seed 42 --explain</pre>
 
     </div>
 
@@ -820,6 +1051,7 @@ function buildAgentCard(agent, state, isWinner) {
     <div class="stat-row"><span>Speed / Bid</span><strong>${state.speed} / ${state.bid.toFixed(3)}</strong></div>
     <div class="stat-row"><span>Reward this tick</span><strong style="color:${isWinner?'#ffd700':'#555'}">${isWinner ? '+' + state.reward : '—'}</strong></div>
     <div class="stat-row"><span>Total reward</span><strong>${state.total_reward}</strong></div>
+    <div class="decision-narrative">${decisionNarrative(agent, state, isWinner)}</div>
   `;
 
   if (agent.strategy === 'Emotion') {
@@ -859,6 +1091,47 @@ function buildAgentCard(agent, state, isWinner) {
   }
 
   return `<div class="agent-card ${isWinner ? 'winner' : ''}">${innerHtml}</div>`;
+}
+
+function decisionNarrative(agent, state, isWinner) {
+  const outcome = isWinner ? 'Won — reward collected.' : 'Lost — no reward this tick.';
+  if (agent.strategy === 'Emotion') {
+    const THRESHOLD = 0.30;
+    const frust = state.frustration || 0;
+    let why = '';
+    if (frust > THRESHOLD) {
+      const action = state.action || 'normal';
+      const actionDesc = {
+        try_harder: `sampled <em>try harder</em> (${pct(state.p_try_harder)} weight) → increased speed`,
+        give_up:    `sampled <em>give up</em> (${pct(state.p_give_up)} weight) → dropped to lower tier`,
+        stay:       `sampled <em>stay</em> (${pct(state.p_stay)} weight) → held position`,
+      }[action] || 'acted normally';
+      why = `Frustration ${frust.toFixed(2)} &gt; threshold 0.30 → ${actionDesc}.`;
+    } else {
+      why = `Frustration ${frust.toFixed(2)} below threshold — no frustrated action, competed normally.`;
+    }
+    return `${why} ${outcome}`;
+  }
+  if (agent.strategy === 'Priority Aging') {
+    const tsw = state.ticks_since_win || 0;
+    let tierReason = '';
+    if (tsw >= 20)      tierReason = `${tsw} ticks without a win → demoted to tier 3.`;
+    else if (tsw >= 8)  tierReason = `${tsw} ticks without a win → demoted to tier 2.`;
+    else                tierReason = `${tsw} ticks since last win → competing at tier 1.`;
+    const pri = (state.accumulated_priority || agent.skill_level).toFixed(3);
+    return `${tierReason} Accumulated priority: ${pri}. ${outcome}`;
+  }
+  if (agent.strategy === 'Exp Backoff') {
+    const losses = state.consecutive_losses || 0;
+    const wait = state.wait_ticks_remaining || 0;
+    let tierReason = '';
+    if (wait > 0)       tierReason = `Waiting out backoff (${wait} ticks left) — sitting at tier 3.`;
+    else if (losses === 0) tierReason = `No recent losses → competing at tier 1.`;
+    else if (losses === 1) tierReason = `1 consecutive loss → stepped down to tier 2.`;
+    else                tierReason = `${losses} consecutive losses → exponential backoff at tier 3.`;
+    return `${tierReason} ${outcome}`;
+  }
+  return outcome;
 }
 
 function bar(label, value, cls) {
