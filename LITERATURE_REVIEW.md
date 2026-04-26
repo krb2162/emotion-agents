@@ -38,8 +38,7 @@ than treating them as arbitrary knobs.
 ---
 
 **Velásquez, J. D. (1997). Modeling emotions and other motivations in synthetic agents.
-*Proceedings of the Fourteenth National Conference on Artificial Intelligence (AAAI-97)*,
-pp. 10–15.**
+*Proceedings of the Fourteenth National Conference on Artificial Intelligence (AAAI-97)*.**
 
 Velásquez proposes a computational model in which multiple emotion processes run in parallel,
 each monitoring the environment for conditions that trigger them, and compete to influence
@@ -100,7 +99,7 @@ of agents and total reward levels.
 system. *Proceedings of the AFIPS Spring Joint Computer Conference*, 21, 335–344.**
 
 This paper introduces the Compatible Time-Sharing System (CTSS), one of the earliest
-multi-level feedback queue schedulers, and is the conceptual ancestor of the priority aging
+multi-level time-sharing systems, and is the conceptual ancestor of the priority aging
 baseline used in this project. The key insight is that processes should be demoted to lower
 priority queues the more CPU time they consume, preventing any single process from
 monopolizing the system. The priority aging baseline implements this in reverse — priority
@@ -137,9 +136,9 @@ socially desirable outcomes as a byproduct of pursuing their own goals. The mixe
 results in this project illustrate a mechanism design failure: the social cost yield
 mechanism was designed assuming all participants would use emotional regulation, but in a
 mixed population, purely self-interested agents exploit the voluntary yielding without
-contributing to system fairness. Chapter 4 on normal-form games and the concept of dominant
-strategies directly explain why priority aging performs well in mixed populations — "never
-yield" is a dominant strategy when the opponent yields unconditionally.
+contributing to system fairness. The treatment of normal-form games and the concept of dominant strategies directly explain
+why priority aging performs well in mixed populations — "never yield" is a dominant strategy
+when the opponent yields unconditionally.
 
 ---
 
