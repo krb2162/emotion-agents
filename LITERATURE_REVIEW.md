@@ -79,6 +79,25 @@ explains their current choices.
 
 ---
 
+**Liu, H., Dai, Y., Tan, H., Lei, Y., Zhou, Y., & Wu, Z. (2025). Outraged AI: Large language
+models prioritise emotion over cost in fairness enforcement. *arXiv:2510.17880 [cs.CL]*.
+https://doi.org/10.48550/arXiv.2510.17880**
+
+This paper provides the first causal evidence that emotion guides moral decision-making in
+LLM agents, tested through altruistic third-party punishment — where an agent incurs
+personal cost to enforce fairness norms. Across 796,100 decisions, LLM agents used negative
+emotion (elicited by unfairness) to drive punishment behavior, often more strongly than
+human participants. This directly supports the theoretical motivation of the present project:
+emotion functions as a causal regulator of agent behavior, not merely a descriptive label.
+Critically, their finding that LLMs prioritize emotion over cost — enforcing norms in an
+almost all-or-none manner — contrasts with the behavior observed here, where emotion agents
+are arguably too cost-sensitive, yielding readily when dominating. The divergence suggests
+that rule-based emotional variables (this project) and LLM-emergent emotion differ in their
+cost calibration. Their proposed future direction — integrating emotion with context-sensitive
+reasoning — aligns with the LLM-hybrid extension identified in this project's future work.
+
+---
+
 ## 2. Fairness and Starvation in Resource Allocation
 
 **Jain, R., Chiu, D., & Hawe, W. (1984). A quantitative measure of fairness and
