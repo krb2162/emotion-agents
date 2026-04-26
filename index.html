@@ -827,6 +827,22 @@
           agents, because state history explains current choices.</li>
       </ul>
 
+      <p><strong>Emotion and Empathy in Multi-Agent Systems</strong></p>
+      <ul>
+        <li><strong>Hassan et al. (2022). Improving the survival time of multiagents in social dilemmas through neurotransmitter-based deep Q-learning model of emotions. <em>Journal of Healthcare Engineering</em>.</strong><br>
+          The closest existing work to this project: emotion-based agents competing for scarce resources in a survival setting. Uses dopamine/oxytocin tied to OCEAN personality traits in deep Q-learning agents. The key distinction is representational — their emotional variables emerge from a neural network (opaque), while this project uses explicit rule-based state variables whose contribution to every decision is fully traceable.</li>
+        <li><strong>Chen, J. et al. (2020). Artificial empathy: A new perspective for analyzing and designing multi-agent systems. <em>IEEE Access</em>, 8, 183649–183664.</strong><br>
+          Formalizes empathy as a design principle with a temperature parameter shifting agents between collectivity, equality, oligopoly, and monopoly modes. Maps directly onto the social cost mechanic: as social cost accumulates, bid strength decreases, shifting the agent from dominant toward egalitarian behavior.</li>
+        <li><strong>Chen, J. et al. (2021). Modeling adaptive empathy based on neutral assessment. <em>Applied Intelligence</em>, 52, 6692–6722.</strong><br>
+          Extends the empathy framework with a self-security constraint preventing agents from helping others at too great a cost to themselves — directly paralleling the hard yield threshold here (social cost > 0.7 → forced tier drop + reset). Both designs solve the same problem: unconstrained empathy collapses agent utility.</li>
+        <li><strong>Zhao, F. et al. (2024). Building altruistic and moral AI agent with brain-inspired emotional empathy mechanisms. <em>IEEE Transactions on Affective Computing</em>.</strong><br>
+          Implements emotional empathy via spiking neural network linked to dopamine signaling, making relief of others' negative states intrinsically rewarding. Parallels the transparent-mode social cost mechanic here (agents observe others' frustration and increase social cost). The contrast is mechanism: neural architecture vs. explicit rule-based variables, with interpretability as the trade-off.</li>
+        <li><strong>Lei, Y. et al. (2024). FairMindSim: Alignment of behavior, emotion, and belief in humans and LLM agents amid ethical dilemmas. <em>arXiv:2410.10398</em>.</strong><br>
+          Measures emotion-behavior alignment in LLM agents in fairness scenarios. Read alongside Liu et al. (2025), these papers establish that LLM-based emotional agents tend toward over-punishment and low cost sensitivity — bracketing the design space against this project's rule-based agents, which are too deferential. LLM emotion is too aggressive; rule-based emotion is too cooperative.</li>
+        <li><strong>Zall, R., &amp; Kangavari, M. (2022). Comparative analytical survey on cognitive agents with emotional intelligence. <em>Cognitive Computation</em>, 14, 1223–1246.</strong><br>
+          Surveys emotional intelligence architectures in cognitive agents, identifying interpretability as a persistent open problem — emotional variables become entangled with learned representations. This project's contribution relative to the surveyed landscape is explicit, inspectable emotional state variables that enable full decision auditability at every tick.</li>
+      </ul>
+
       <p><strong>Fairness and Resource Allocation</strong></p>
       <ul>
         <li><strong>Jain, R., Chiu, D., &amp; Hawe, W. (1984). A quantitative measure of fairness and discrimination for resource allocation in shared computer systems. <em>DEC Technical Report TR-301</em>.</strong><br>

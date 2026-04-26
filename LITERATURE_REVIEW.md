@@ -98,7 +98,107 @@ reasoning — aligns with the LLM-hybrid extension identified in this project's 
 
 ---
 
-## 2. Fairness and Starvation in Resource Allocation
+## 2. Emotion and Empathy in Multi-Agent Systems
+
+**Hassan, A., Shahid, M., Hayat, F., Arshad, J., Jaffery, M., Rehman, A., Ullah, K.,
+Hussen, S., & Hamam, H. (2022). Improving the survival time of multiagents in social
+dilemmas through neurotransmitter-based deep Q-learning model of emotions. *Journal of
+Healthcare Engineering*, 2022. https://doi.org/10.1155/2022/3449433**
+
+This paper is the closest existing work to the present project: emotion-based agents
+competing for scarce resources in a survival setting, measured by group outcome (survival
+time). The authors model dopamine and oxytocin as neurotransmitters tied to OCEAN
+personality traits within deep Q-learning agents, finding that more selfless agents extend
+group survival. The key distinction from this project is representational: their emotional
+variables emerge from a neural network trained via reinforcement learning, making individual
+decisions opaque. This project instead uses explicit rule-based emotional state variables
+(frustration, reward reinforcement, social cost) whose contribution to every decision is
+fully traceable, directly addressing the interpretability requirement the neural approach
+cannot satisfy.
+
+---
+
+**Chen, J., Zhang, D., Qu, Z., & Wang, C. (2020). Artificial empathy: A new perspective
+for analyzing and designing multi-agent systems. *IEEE Access*, 8, 183649–183664.
+https://doi.org/10.1109/access.2020.3029502**
+
+Chen et al. formalize empathy as a design principle for multi-agent systems, proposing a
+framework in which an "empathy temperature" parameter shifts agent behavior between four
+modes — collectivity, equality, oligopoly, and monopoly — by adjusting how much agents
+value others' utility relative to their own. This maps directly onto the social cost
+mechanic in this project: as social cost accumulates, an agent's effective bid strength
+decreases, shifting it from a dominant (oligopoly-like) mode toward a more egalitarian
+one. Their framework provides theoretical grounding for why tunable empathy produces
+different system-level fairness outcomes, which the experimental results here confirm
+empirically across social awareness conditions.
+
+---
+
+**Chen, J., Zhang, D., Qu, Z., & Wang, C. (2021). Modeling adaptive empathy based on
+neutral assessment: a way to enhance the prosocial behaviors of socialized agents under
+the premise of self-security. *Applied Intelligence*, 52, 6692–6722.
+https://doi.org/10.1007/s10489-021-02712-9**
+
+This paper extends the empathy framework with a "neutral assessment" rule — agents evaluate
+situations without emotional bias before deciding whether to extend empathy — preserving
+self-interest while enabling prosocial behavior. The self-security constraint, which
+prevents agents from helping others at too great a cost to themselves, parallels the hard
+yield threshold in this project: an emotion agent yields to a lower tier when social cost
+exceeds 0.7, but then resets and continues competing. Both designs solve the same problem —
+unconstrained empathy collapses agent utility — through a threshold that limits how much
+cooperative behavior is expressed before self-interest is restored.
+
+---
+
+**Zhao, F., Feng, H., Tong, H., Han, Z., Lin, E., Lu, E., Sun, Y., & Zeng, Y. (2024).
+Building altruistic and moral AI agent with brain-inspired emotional empathy mechanisms.
+*IEEE Transactions on Affective Computing*. https://doi.org/10.1109/taffc.2025.3627936**
+
+Zhao et al. implement emotional empathy via a spiking neural network that links
+mirror-neuron-like perception to dopamine signaling, making relief of others' negative
+emotional states intrinsically rewarding and driving altruistic decisions. This is the most
+biologically grounded approach in the related literature. Its findings parallel a key
+result here: agents that represent and respond to others' negative states (frustration in
+transparent mode) produce more prosocial outcomes than purely self-interested agents. The
+contrast is again in mechanism — spiking neural architecture vs. explicit rule-based state
+variables — with interpretability as the distinguishing trade-off.
+
+---
+
+**Lei, Y., Liu, H., Xie, C., Liu, S., Yin, Z., Chen, C., Li, G., Torr, P., & Wu, Z.
+(2024). FairMindSim: Alignment of behavior, emotion, and belief in humans and LLM agents
+amid ethical dilemmas. *arXiv:2410.10398*.
+https://doi.org/10.48550/arxiv.2410.10398**
+
+FairMindSim measures how well LLM agent behavior, emotional state, and stated beliefs
+align with each other and with human responses in fairness-relevant scenarios. Its finding
+that LLM agents can exhibit coherent emotion-behavior alignment supports the broader
+premise that emotion-based decision making is a tractable design goal, not merely
+anthropomorphism. Read alongside Liu et al. (2025), these two papers establish that
+LLM-based emotional agents tend toward over-punishment and reduced cost sensitivity —
+a different failure mode from the one observed here, where rule-based emotion agents yield
+too readily. Together they bracket the design space: pure rule-based emotion is too
+deferential, LLM emotion is too aggressive.
+
+---
+
+**Zall, R., & Kangavari, M. (2022). Comparative analytical survey on cognitive agents with
+emotional intelligence. *Cognitive Computation*, 14, 1223–1246.
+https://doi.org/10.1007/s12559-022-10007-5**
+
+This survey maps the landscape of cognitive agent architectures that incorporate emotional
+intelligence, covering appraisal-based models, learning-based models, and hybrid
+approaches. It identifies interpretability as a persistent open problem: most emotionally
+intelligent agent architectures produce richer behavior at the cost of explainability, as
+emotional variables become entangled with learned representations. This project's
+contribution relative to the surveyed landscape is precisely this trade-off resolved in
+favor of interpretability — explicit, inspectable emotional state variables that enable
+full decision auditability at every tick, at the cost of flexibility compared to
+learned approaches.
+
+---
+
+## 3. Fairness and Starvation in Resource Allocation
 
 **Jain, R., Chiu, D., & Hawe, W. (1984). A quantitative measure of fairness and
 discrimination for resource allocation in shared computer systems. *DEC Technical Report
@@ -143,7 +243,7 @@ distribution.
 
 ---
 
-## 3. Multi-Agent Systems
+## 4. Multi-Agent Systems
 
 **Shoham, Y., & Leyton-Brown, K. (2009). *Multiagent Systems: Algorithmic, Game-Theoretic,
 and Logical Foundations*. Cambridge University Press.**
@@ -161,7 +261,7 @@ when the opponent yields unconditionally.
 
 ---
 
-## 4. Cooperation and Defection
+## 5. Cooperation and Defection
 
 **Axelrod, R. (1984). *The Evolution of Cooperation*. Basic Books.**
 
