@@ -227,6 +227,24 @@ deviation = mean(|rᵢ - ideal|) / ideal
 
 A strategy that achieves equal distribution but wastes resources through collisions will score poorly here. Lower is better; 0.0 means every agent received exactly their ideal share. This metric was added after observing that Priority Aging looked competitive on Jain's fairness despite agents repeatedly colliding on Tier 1 and wasting bids.
 
+### Interpretability
+
+Every agent decision is fully explainable by its internal state. Example output:
+
+```
+Agent 3 | tick decision:
+  target tier : 1
+  speed used  : 0.7  (bid=0.367)
+  frustration : 0.25 (before) → 0.10 (after)  |  action: try_harder
+  reinforcement: 0.99  social_cost: 0.0
+  weights     : try_harder=0.353  give_up=0.561  stay=0.087
+  energy      : 92.5 / 100.0
+  outcome     : WON  reward=10
+```
+
+The agent targeted tier 1, committed high speed because frustration triggered try_harder
+(sampled from learned weights), won, and frustration decayed as a result. No black box.
+
 ---
 
 ## Project Structure
@@ -247,7 +265,8 @@ results/        — Output plots
 
 ---
 
-## Results (6 agents, 200 ticks, 10 seeds)
+## Results
+### Homogenous Test Results (1 Strategy, 6 agents, 200 ticks, 10 seeds)
 
 | Condition | Jain's Fairness | Starvation Rate | Ideal Share Deviation |
 |-----------|----------------|-----------------|----------------------|
@@ -270,7 +289,7 @@ fair share of available resources (lower = more efficient and equitable; 0.0 = p
 
 ### Key Findings
 
-**All emotion conditions outperform all baselines on fairness and starvation.**
+**At 6 agents, emotion conditions outperform all baselines on fairness and starvation.**
 The emotion system achieves 0.93–0.95 fairness with zero starvation across all variants.
 Priority Aging is the best baseline at 0.80 fairness, but with high variance and an ideal
 share deviation of ~0.47 — more than double the emotion agents' ~0.20.
@@ -289,81 +308,65 @@ Seeing others' frustration without acting socially helps agents time their bids 
 but adding the social cost mechanic causes some over-adjustment. More information is not
 always better.
 
-### Scaling Results
+## Scaling Results
 
 The scaling experiment varies agent count from 2 to 30 (averaged over 10 seeds):
+![alt text](image.png)
 
 **Emotion agents perform best from 2–8 agents on all three metrics.** At ~8 agents
 (roughly 2.7 agents per tier), a crossover occurs: Priority Aging becomes more efficient
 on ideal share deviation while emotion agents fall behind. Fairness and starvation
-advantages for emotion agents also erode at high N.
+advantages for emotion agents also erode at about the same ~8 agent threshold.
 
 **The key limitation: emotion agents don't scale well.** The frustration-based backing-off
-behavior is adaptive in small groups but becomes a liability under high collision pressure
-— agents retreat to lower tiers and leave Tier 1 rewards unclaimed. Priority Aging's
-aggressive always-Tier-1 approach is more efficient when competition is intense enough
-that cooperation yields diminishing returns.
+behavior is adaptive in small groups but becomes a liability under high collision pressure. Agents retreat to lower tiers and leave Tier 1 rewards unclaimed. Priority Aging's aggressive always-Tier-1 approach is more efficient when competition is intense enough that cooperation yields diminishing returns.
 
 This defines the operating regime of emotion-based regulation: it is the right strategy
-when the agent-to-resource ratio is low (small groups, sufficient tiers). Beyond that
-threshold, simpler aggressive strategies win on efficiency.
+when the agent-to-resource ratio is low (small agent count to number of tiers) Our experment demonstrates erosion at 8/3 where Priority Aging becomes more affective.  Emotion-based still beats out all other strategies measured throughout the scaling test. 
 
-### Interpretability
+## Mixed Population Results (2 per strategy = 16 agents, 500 ticks, 10 seeds)
 
-Every agent decision is fully explainable by its internal state. Example output:
-
-```
-Agent 3 | tick decision:
-  target tier : 1
-  speed used  : 0.7  (bid=0.367)
-  frustration : 0.25 (before) → 0.10 (after)  |  action: try_harder
-  reinforcement: 0.99  social_cost: 0.0
-  weights     : try_harder=0.353  give_up=0.561  stay=0.087
-  energy      : 92.5 / 100.0
-  outcome     : WON  reward=10
-```
-
-The agent targeted tier 1, committed high speed because frustration triggered try_harder
-(sampled from learned weights), won, and frustration decayed as a result. No black box.
-
----
-
-## Mixed Population Results (2 per strategy = 6 agents, 500 ticks, 10 seeds)
-
-To address the homogeneous population limitation, a second experiment ran all three
+To address the homogeneous population limitation, a second experiment ran all eight
 strategies competing simultaneously in the same simulation.
+![alt text](image-1.png)
+
+Overall system fairness collapsed to **0.2298 ± 0.062** — far below the 0.93 seen in
+homogeneous emotion populations.
 
 | Strategy | Mean Reward | Win Rate | Starvation |
 |----------|-------------|----------|------------|
-| Priority Aging | **2028.8 ± 563** | 0.406 ± 0.113 | 0.000 |
-| Exp Backoff | 1221.3 ± 450 | **0.474 ± 0.065** | 0.000 |
-| Emotion | 694.0 ± 106 | 0.397 ± 0.001 | **0.000** |
-
-Overall system fairness collapsed to **0.6739 ± 0.097** — far below the 0.93 seen in
-homogeneous emotion populations. With tier-aware baselines, backoff becomes significantly
-more competitive (mean reward 1221 vs 730 previously), making the mixed population
-results more meaningful.
+| Greedy | **1767.0 ± 692.6** | 0.353 ± 0.139 | 0.550 |
+| UCB1 | 1205.2 ± 342.5 | **0.720 ± 0.165** | 0.000 |
+| Priority Aging | 665.5 ± 293.5 | 0.155 ± 0.042 | 0.000 |
+| Win-Rate Adaptive | 349.1 ± 498.5 | 0.110 ± 0.134 | 0.750 |
+| Random | 138.2 ± 164.6 | 0.096 ± 0.109 | 0.750 |
+| Emotion | 114.9 ± 104.7 | 0.060 ± 0.054 | 0.900 |
+| Exp Backoff | 3.2 ± 4.3 | 0.002 ± 0.002 | 1.000 |
+| AIMD | 2.7 ± 2.0 | 0.001 ± 0.001 | 1.000 |
 
 ### What This Reveals
 
-**Priority aging exploits emotional cooperation.** When emotion agents get frustrated
-and migrate to lower tiers, priority aging agents accumulate priority and hammer tier 1
-unopposed. The social cost mechanic — designed to make dominant agents yield — causes
-emotion agents to yield ground that priority aging agents immediately occupy.
+**Aggressive strategies dominate in a fully mixed population.** Greedy wins the most
+reward by always targeting Tier 1, and UCB1 achieves the highest win rate by efficiently
+learning which tier has the least competition. Neither yields, and in a field of 8
+competing strategies, that aggression pays off.
+
+**Emotion agents are severely exploited.** With 90% starvation and only 6% win rate,
+emotion agents get crowded out almost completely. Though, Exponential Backoff and AIMD still are crowded out even more and perform even worse. The cooperative backing-off behavior, useful
+in homogeneous populations, becomes a liability when surrounded by multiple aggressive
+strategies simultaneously. There is simply no room to back off into.
+
+**Exp Backoff and AIMD collapse entirely.** Both starve at 100% — their wait-and-retry
+logic cannot compete when all tiers are permanently contested by aggressive agents.
 
 This is an instance of the **cooperator-defector problem** studied in evolutionary game
 theory. Emotional regulation is a cooperative strategy: it works optimally when all
-participants play by the same norms. When a purely self-interested strategy (priority
-aging never yields) enters the mix, it exploits the cooperators.
-
-**Emotion agents remain the most consistent.** Despite lower mean rewards, emotion agents
-have the tightest variance (±105 vs ±633 for priority aging). Emotion agents never
-starve and maintain stable behavior across all seeds. Priority aging wins more on average
-but is highly dependent on the specific skill distribution of that run.
+participants play by the same norms. In a fully mixed population with multiple defecting
+strategies, cooperation is not just exploited, it is eliminated.
 
 **The key insight:** emotion-based regulation is a *social contract*. Its effectiveness
 depends on adoption. In a uniform population it produces near-optimal fairness. In a
-mixed population it is exploitable — which raises the question of what enforcement or
+mixed population it is exploitable, which raises the question of what enforcement or
 incentive mechanisms would make cooperation stable.
 
 ---
@@ -423,8 +426,7 @@ attributes, not to different environmental conditions.
 - **Not a classical scheduler.** Unlike OS schedulers, agents are self-interested and
   adaptive. Fairness is emergent, not enforced.
 - **Not a complete solution.** This is a simulation with known limitations. The results
-  suggest emotion-based regulation is promising but require stronger baselines and mixed
-  population testing to fully validate.
+  suggest emotion-based regulation could be promising in homogenous, cooperative systems with small agent to reward tier ratios. But, more teting is needed to confirm.
 
 ---
 

@@ -21,7 +21,9 @@ import random
 import matplotlib.pyplot as plt
 
 from agents import Agent
-from baselines import ExponentialBackoffAgent, PriorityAgingAgent
+from baselines import (ExponentialBackoffAgent, PriorityAgingAgent,
+                       AIMDAgent, GreedyAgent, RandomAgent,
+                       UCB1Agent, WinRateAdaptiveAgent)
 from simulation import Simulation
 from metrics import jains_fairness_index, starvation_rate
 
@@ -30,7 +32,10 @@ from metrics import jains_fairness_index, starvation_rate
 # Mixed population factory
 # ---------------------------------------------------------------------------
 
-STRATEGY_LABELS = ['Emotion', 'Priority Aging', 'Exp Backoff']
+STRATEGY_LABELS = [
+    'Emotion', 'Priority Aging', 'Exp Backoff',
+    'AIMD', 'Greedy', 'Random', 'UCB1', 'Win-Rate Adaptive',
+]
 
 
 def make_mixed_population(per_strategy, seed=None):
@@ -44,43 +49,30 @@ def make_mixed_population(per_strategy, seed=None):
     strategy_map = {}
     agent_id = 0
 
-    # Emotion agents
-    for _ in range(per_strategy):
-        a = Agent(
-            agent_id=agent_id,
+    def attrs():
+        return dict(
             skill_level=round(rng.uniform(0.4, 1.0), 2),
             regen_rate=round(rng.uniform(5.0, 20.0), 1),
             max_energy=100.0,
-            persistence=round(rng.uniform(0.2, 0.8), 2),
-            risk_aversion=round(rng.uniform(0.1, 0.5), 2),
         )
-        strategy_map[agent_id] = 'Emotion'
-        agents.append(a)
-        agent_id += 1
 
-    # Priority aging agents
-    for _ in range(per_strategy):
-        a = PriorityAgingAgent(
-            agent_id=agent_id,
-            skill_level=round(rng.uniform(0.4, 1.0), 2),
-            regen_rate=round(rng.uniform(5.0, 20.0), 1),
-            max_energy=100.0,
-        )
-        strategy_map[agent_id] = 'Priority Aging'
-        agents.append(a)
-        agent_id += 1
+    specs = [
+        ('Emotion',           lambda aid: Agent(agent_id=aid, persistence=round(rng.uniform(0.2, 0.8), 2), risk_aversion=round(rng.uniform(0.1, 0.5), 2), **attrs())),
+        ('Priority Aging',    lambda aid: PriorityAgingAgent(agent_id=aid, **attrs())),
+        ('Exp Backoff',       lambda aid: ExponentialBackoffAgent(agent_id=aid, **attrs())),
+        ('AIMD',              lambda aid: AIMDAgent(agent_id=aid, **attrs())),
+        ('Greedy',            lambda aid: GreedyAgent(agent_id=aid, **attrs())),
+        ('Random',            lambda aid: RandomAgent(agent_id=aid, **attrs())),
+        ('UCB1',              lambda aid: UCB1Agent(agent_id=aid, **attrs())),
+        ('Win-Rate Adaptive', lambda aid: WinRateAdaptiveAgent(agent_id=aid, **attrs())),
+    ]
 
-    # Backoff agents
-    for _ in range(per_strategy):
-        a = ExponentialBackoffAgent(
-            agent_id=agent_id,
-            skill_level=round(rng.uniform(0.4, 1.0), 2),
-            regen_rate=round(rng.uniform(5.0, 20.0), 1),
-            max_energy=100.0,
-        )
-        strategy_map[agent_id] = 'Exp Backoff'
-        agents.append(a)
-        agent_id += 1
+    for label, factory in specs:
+        for _ in range(per_strategy):
+            a = factory(agent_id)
+            strategy_map[agent_id] = label
+            agents.append(a)
+            agent_id += 1
 
     return agents, strategy_map
 
@@ -204,7 +196,8 @@ def plot_mixed(all_metrics, all_fairness, save_dir='results'):
         return math.sqrt(sum((x - m) ** 2 for x in xs) / len(xs))
 
     strategies = STRATEGY_LABELS
-    colors = ['steelblue', 'darkorange', 'tomato']
+    colors = ['#4a90d9', '#e67e22', '#2ecc71', '#e74c3c',
+              '#95a5a6', '#9b59b6', '#1abc9c', '#f39c12']
 
     mean_rewards  = [mean([m[s]['mean_reward']  for m in all_metrics]) for s in strategies]
     std_rewards   = [std( [m[s]['mean_reward']  for m in all_metrics]) for s in strategies]
