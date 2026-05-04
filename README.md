@@ -443,3 +443,9 @@ attributes, not to different environmental conditions.
 - Survival mechanics: agents with finite lifespan must accumulate minimum resources to
   survive, adding existential stakes to the emotional dynamics
 - Formal analysis of convergence and fairness bounds
+
+---
+
+## Literature Review
+
+A full literature review covering emotion and affect in AI agents, fairness and starvation in resource allocation, classical scheduling baselines, and cooperation theory is available in [LITERATURE_REVIEW.md](LITERATURE_REVIEW.md).
