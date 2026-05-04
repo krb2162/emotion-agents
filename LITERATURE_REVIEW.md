@@ -5,11 +5,14 @@ This review covers four areas relevant to the project: (1) emotion and affect in
 as baselines, and (4) cooperation and defection in multi-agent systems.
 
 ---
-TODO: add Stephen Slade's book!!
-TODO: check all citations
-TODO: edit AI writing to not include ' -- ' 
 
 ## 1. Emotion and Affect in Artificial Agents
+
+**Slade, S. (1993). *Goal-Based Decision Making: An Interpersonal Model*. Psychology Press.**
+
+Slade's book develops a computational model of decision making in which goals and interpersonal context (including social relationships, emotional stakes, and the anticipated reactions of others) are first-class inputs to the decision process rather than afterthoughts. The central argument is that rational choice models fail to account for how people actually decide when others are involved: the desirability of an outcome depends not just on its consequences but on who is affected and how the decision reflects on the agent socially. This project implements a concrete instance of this idea: the social cost variable accumulates when an agent repeatedly wins, encoding the interpersonal cost of dominance, and feeds back into bid strength to produce voluntary yielding. The emotion system as a whole can be read as a lightweight implementation of GBDM: agents track goal progress (reward reinforcement), respond to failure (frustration), and model social context (social cost) to drive decisions that balance individual and interpersonal outcomes.
+
+---
 
 **Picard, R. W. (1997). *Affective Computing*. MIT Press.**
 
@@ -29,7 +32,7 @@ Cambridge University Press.**
 
 The OCC model provides a systematic account of how emotions arise from appraisals of events
 relative to goals, standards, and attitudes. Under OCC, frustration maps to disappointment
-or distress arising from undesirable outcomes relative to expectations — exactly the
+or distress arising from undesirable outcomes relative to expectations, which is exactly the
 accumulation pattern used in this project (frustration builds on loss, decays on win). The
 model also distinguishes emotions by their action tendencies: distress motivates either
 persistence or withdrawal, corresponding directly to the try_harder / give_up decision
@@ -47,31 +50,30 @@ behavior based on their intensity. This is structurally similar to the three-way
 decision (try_harder, give_up, stay) implemented here: multiple possible actions are
 weighted by learned probabilities derived from emotional state, and one is sampled. The key
 shared insight is that behavior under emotional arousal is probabilistic rather than
-deterministic, and the probabilities shift with experience — which this project implements
+deterministic, and the probabilities shift with experience, which this project implements
 via the learning rate update to p_try_harder and p_give_up after each outcome.
 
 ---
 
 **Gratch, J., & Marsella, S. (2004). A domain-independent framework for modeling emotion.
-*Cognitive Systems Research*, 5(4), 269–306.**
+*Cognitive Systems Research*, 5(4).**
 
 Gratch and Marsella's EMA (Emotion and Adaptation) framework models emotion as arising from
 the continuous appraisal of events against goals, with emotions feeding back into replanning
-and coping behavior. Their notion of coping — problem-focused (change the situation) vs.
-emotion-focused (change the interpretation) — maps onto the try_harder vs. give_up split in
-this project. An agent that increases speed when frustrated is engaging in problem-focused
-coping; one that drops to a lower tier is engaging in emotion-focused coping (accepting a
-reduced goal). EMA also emphasizes that emotional state should be fully auditable at each
-step, which aligns with the interpretability requirement of this project.
+and coping behavior. Their notion of coping (problem-focused vs. emotion-focused) maps onto
+the try_harder vs. give_up split in this project. An agent that increases speed when
+frustrated is engaging in problem-focused coping; one that drops to a lower tier is engaging
+in emotion-focused coping (accepting a reduced goal). EMA also emphasizes that emotional
+state should be fully auditable at each step, which aligns with the interpretability
+requirement of this project.
 
 ---
 
-**Bates, J. (1994). The role of emotion in believable agents. *Communications of the ACM*,
-37(7), 122–125.**
+**Bates, J. (1994). The role of emotion in believable agents. *Communications of the ACM*, 37(7).**
 
 Bates focuses on emotion as the mechanism that makes synthetic agents appear believable and
-purposeful rather than mechanical. He argues that even simple emotional dynamics — agents
-that respond to success and failure in ways that mirror frustration and satisfaction —
+purposeful rather than mechanical. He argues that even simple emotional dynamics (agents
+that respond to success and failure in ways that mirror frustration and satisfaction)
 produce qualitatively richer behavior than purely reactive systems. This project is not
 primarily about believability, but the same principle applies to interpretability: agents
 whose behavior changes in traceable response to accumulated emotional state are more
@@ -85,17 +87,17 @@ models prioritise emotion over cost in fairness enforcement. *arXiv:2510.17880 [
 https://doi.org/10.48550/arXiv.2510.17880**
 
 This paper provides the first causal evidence that emotion guides moral decision-making in
-LLM agents, tested through altruistic third-party punishment — where an agent incurs
+LLM agents, tested through altruistic third-party punishment, where an agent incurs
 personal cost to enforce fairness norms. Across 796,100 decisions, LLM agents used negative
 emotion (elicited by unfairness) to drive punishment behavior, often more strongly than
 human participants. This directly supports the theoretical motivation of the present project:
 emotion functions as a causal regulator of agent behavior, not merely a descriptive label.
-Critically, their finding that LLMs prioritize emotion over cost — enforcing norms in an
-almost all-or-none manner — contrasts with the behavior observed here, where emotion agents
-are arguably too cost-sensitive, yielding readily when dominating. The divergence suggests
+Their finding that LLMs prioritize emotion over cost, enforcing norms in an almost
+all-or-none manner, contrasts with the behavior observed here, where emotion agents are
+arguably too cost-sensitive, yielding readily when dominating. The divergence suggests
 that rule-based emotional variables (this project) and LLM-emergent emotion differ in their
-cost calibration. Their proposed future direction — integrating emotion with context-sensitive
-reasoning — aligns with the LLM-hybrid extension identified in this project's future work.
+cost calibration. Their proposed future direction of integrating emotion with context-sensitive
+reasoning aligns with the LLM-hybrid extension identified in this project's future work.
 
 ---
 
@@ -120,12 +122,12 @@ cannot satisfy.
 ---
 
 **Chen, J., Zhang, D., Qu, Z., & Wang, C. (2020). Artificial empathy: A new perspective
-for analyzing and designing multi-agent systems. *IEEE Access*, 8, 183649–183664.
+for analyzing and designing multi-agent systems. *IEEE Access*, 8.
 https://doi.org/10.1109/access.2020.3029502**
 
 Chen et al. formalize empathy as a design principle for multi-agent systems, proposing a
 framework in which an "empathy temperature" parameter shifts agent behavior between four
-modes — collectivity, equality, oligopoly, and monopoly — by adjusting how much agents
+modes (collectivity, equality, oligopoly, and monopoly) by adjusting how much agents
 value others' utility relative to their own. This maps directly onto the social cost
 mechanic in this project: as social cost accumulates, an agent's effective bid strength
 decreases, shifting it from a dominant (oligopoly-like) mode toward a more egalitarian
@@ -137,21 +139,21 @@ empirically across social awareness conditions.
 
 **Chen, J., Zhang, D., Qu, Z., & Wang, C. (2021). Modeling adaptive empathy based on
 neutral assessment: a way to enhance the prosocial behaviors of socialized agents under
-the premise of self-security. *Applied Intelligence*, 52, 6692–6722.
+the premise of self-security. *Applied Intelligence*, 52.
 https://doi.org/10.1007/s10489-021-02712-9**
 
-This paper extends the empathy framework with a "neutral assessment" rule — agents evaluate
-situations without emotional bias before deciding whether to extend empathy — preserving
-self-interest while enabling prosocial behavior. The self-security constraint, which
-prevents agents from helping others at too great a cost to themselves, parallels the hard
-yield threshold in this project: an emotion agent yields to a lower tier when social cost
-exceeds 0.7, but then resets and continues competing. Both designs solve the same problem —
-unconstrained empathy collapses agent utility — through a threshold that limits how much
-cooperative behavior is expressed before self-interest is restored.
+This paper extends the empathy framework with a "neutral assessment" rule, where agents
+evaluate situations without emotional bias before deciding whether to extend empathy,
+preserving self-interest while enabling prosocial behavior. The self-security constraint,
+which prevents agents from helping others at too great a cost to themselves, parallels the
+hard yield threshold in this project: an emotion agent yields to a lower tier when social
+cost exceeds 0.7, but then resets and continues competing. Both designs solve the same
+problem of unconstrained empathy collapsing agent utility through a threshold that limits
+how much cooperative behavior is expressed before self-interest is restored.
 
 ---
 
-**Zhao, F., Feng, H., Tong, H., Han, Z., Lin, E., Lu, E., Sun, Y., & Zeng, Y. (2024).
+**Zhao, F., Feng, H., Tong, H., Han, Z., Lin, E., Lu, E., Sun, Y., & Zeng, Y. (2024, revised 2025).
 Building altruistic and moral AI agent with brain-inspired emotional empathy mechanisms.
 *IEEE Transactions on Affective Computing*. https://doi.org/10.1109/taffc.2025.3627936**
 
@@ -161,8 +163,8 @@ emotional states intrinsically rewarding and driving altruistic decisions. This 
 biologically grounded approach in the related literature. Its findings parallel a key
 result here: agents that represent and respond to others' negative states (frustration in
 transparent mode) produce more prosocial outcomes than purely self-interested agents. The
-contrast is again in mechanism — spiking neural architecture vs. explicit rule-based state
-variables — with interpretability as the distinguishing trade-off.
+contrast is in mechanism (spiking neural architecture vs. explicit rule-based state
+variables), with interpretability as the distinguishing trade-off.
 
 ---
 
@@ -176,15 +178,15 @@ align with each other and with human responses in fairness-relevant scenarios. I
 that LLM agents can exhibit coherent emotion-behavior alignment supports the broader
 premise that emotion-based decision making is a tractable design goal, not merely
 anthropomorphism. Read alongside Liu et al. (2025), these two papers establish that
-LLM-based emotional agents tend toward over-punishment and reduced cost sensitivity —
-a different failure mode from the one observed here, where rule-based emotion agents yield
+LLM-based emotional agents tend toward over-punishment and reduced cost sensitivity, a
+different failure mode from the one observed here, where rule-based emotion agents yield
 too readily. Together they bracket the design space: pure rule-based emotion is too
 deferential, LLM emotion is too aggressive.
 
 ---
 
 **Zall, R., & Kangavari, M. (2022). Comparative analytical survey on cognitive agents with
-emotional intelligence. *Cognitive Computation*, 14, 1223–1246.
+emotional intelligence. *Cognitive Computation*, 14.
 https://doi.org/10.1007/s12559-022-10007-5**
 
 This survey maps the landscape of cognitive agent architectures that incorporate emotional
@@ -193,9 +195,9 @@ approaches. It identifies interpretability as a persistent open problem: most em
 intelligent agent architectures produce richer behavior at the cost of explainability, as
 emotional variables become entangled with learned representations. This project's
 contribution relative to the surveyed landscape is precisely this trade-off resolved in
-favor of interpretability — explicit, inspectable emotional state variables that enable
-full decision auditability at every tick, at the cost of flexibility compared to
-learned approaches.
+favor of interpretability: explicit, inspectable emotional state variables that enable
+full decision auditability at every tick, at the cost of flexibility compared to learned
+approaches.
 
 ---
 
@@ -216,13 +218,13 @@ of agents and total reward levels.
 ---
 
 **Corbató, F. J., Merwin-Daggett, M., & Daley, R. C. (1962). An experimental time-sharing
-system. *Proceedings of the AFIPS Spring Joint Computer Conference*, 21, 335–344.**
+system. *Proceedings of the AFIPS Spring Joint Computer Conference*, 21.**
 
 This paper introduces the Compatible Time-Sharing System (CTSS), one of the earliest
 multi-level time-sharing systems, and is the conceptual ancestor of the priority aging
 baseline used in this project. The key insight is that processes should be demoted to lower
 priority queues the more CPU time they consume, preventing any single process from
-monopolizing the system. The priority aging baseline implements this in reverse — priority
+monopolizing the system. The priority aging baseline implements this in reverse: priority
 accumulates when an agent is not winning (analogous to a process waiting), and resets on a
 win (analogous to a quantum expiry). This mirrors how modern OS schedulers handle starvation
 prevention.
@@ -230,16 +232,16 @@ prevention.
 ---
 
 **Metcalfe, R. M., & Boggs, D. R. (1976). Ethernet: Distributed packet switching for local
-computer networks. *Communications of the ACM*, 19(7), 395–404.**
+computer networks. *Communications of the ACM*, 19(7).**
 
 Metcalfe and Boggs introduce the CSMA/CD protocol with binary exponential backoff for
-collision resolution — the direct inspiration for the exponential backoff baseline. Under
-CSMA/CD, a node that detects a collision waits a random interval drawn from an exponentially
-growing window before retransmitting, reducing the probability of repeated collisions. The
-baseline adapts this to multi-tier resource competition: consecutive losses trigger
-progressively longer waits at lower tiers, with the wait window capped at 16 ticks. The
-original protocol was designed for network throughput, not fairness, which explains why
-the backoff baseline underperforms on Jain's index — it was never optimized for equitable
+collision resolution, which is the direct inspiration for the exponential backoff baseline.
+Under CSMA/CD, a node that detects a collision waits a random interval drawn from an
+exponentially growing window before retransmitting, reducing the probability of repeated
+collisions. The baseline adapts this to multi-tier resource competition: consecutive losses
+trigger progressively longer waits at lower tiers, with the wait window capped at 16 ticks.
+The original protocol was designed for network throughput, not fairness, which explains why
+the backoff baseline underperforms on Jain's index, as it was never optimized for equitable
 distribution.
 
 ---
@@ -250,15 +252,15 @@ distribution.
 and Logical Foundations*. Cambridge University Press.**
 
 This textbook provides the theoretical scaffolding for reasoning about agent behavior in
-shared environments. Particularly relevant is the treatment of mechanism design — the
+shared environments. Particularly relevant is the treatment of mechanism design: the
 question of how to structure rules and incentives so that self-interested agents produce
 socially desirable outcomes as a byproduct of pursuing their own goals. The mixed population
 results in this project illustrate a mechanism design failure: the social cost yield
 mechanism was designed assuming all participants would use emotional regulation, but in a
 mixed population, purely self-interested agents exploit the voluntary yielding without
-contributing to system fairness. The treatment of normal-form games and the concept of dominant strategies directly explain
-why priority aging performs well in mixed populations — "never yield" is a dominant strategy
-when the opponent yields unconditionally.
+contributing to system fairness. The treatment of normal-form games and the concept of
+dominant strategies directly explains why aggressive strategies perform well in mixed
+populations: "never yield" is a dominant strategy when the opponent yields unconditionally.
 
 ---
 
@@ -277,26 +279,25 @@ social yielding should be conditional on detecting a cooperative opponent, not u
 
 ---
 
-**Nowak, M. A. (2006). Five rules for the evolution of cooperation. *Science*, 314(5805),
-1560–1563.**
+**Nowak, M. A. (2006). Five rules for the evolution of cooperation. *Science*, 314(5805).**
 
 Nowak synthesizes five mechanisms by which cooperation can evolve against defection: kin
 selection, direct reciprocity, indirect reciprocity, network reciprocity, and group
 selection. The mixed population results in this project fail on direct reciprocity (emotion
 agents have no way to condition on opponent behavior) and on group selection (the simulation
 does not select for groups of cooperators). Nowak's framework predicts that cooperation
-should be unstable in the mixed population scenario this project tests — which is exactly
+should be unstable in the mixed population scenario this project tests, which is exactly
 what is observed. Importantly, Nowak's network reciprocity condition suggests that if emotion
 agents were clustered (only competing against other emotion agents), cooperation would be
-stable — consistent with the homogeneous population results showing 0.94 fairness.
+stable, consistent with the homogeneous population results showing 0.94 fairness.
 
 ---
 
 ## Summary
 
 The project sits at the intersection of four bodies of work. From affective computing it
-draws the theoretical grounding for emotion as an internal regulatory variable (Picard,
-OCC, Velásquez, Gratch & Marsella). From resource allocation it draws the fairness metric
+draws the theoretical grounding for emotion as an internal regulatory variable (Slade,
+Picard, OCC, Velásquez, Gratch & Marsella). From resource allocation it draws the fairness metric
 (Jain) and the baseline scheduling strategies (Corbató for priority aging, Metcalfe & Boggs
 for backoff). From multi-agent systems it draws the mechanism design framing for why
 voluntary cooperation is exploitable (Shoham & Leyton-Brown). From cooperation theory it
