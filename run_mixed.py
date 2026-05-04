@@ -197,7 +197,7 @@ def plot_mixed(all_metrics, all_fairness, save_dir='results'):
 
     strategies = STRATEGY_LABELS
     colors = ['#4a90d9', '#e67e22', '#2ecc71', '#e74c3c',
-              '#95a5a6', '#9b59b6', '#1abc9c', '#f39c12']
+              '#e91e8c', '#9b59b6', '#1abc9c', '#f39c12']
 
     mean_rewards  = [mean([m[s]['mean_reward']  for m in all_metrics]) for s in strategies]
     std_rewards   = [std( [m[s]['mean_reward']  for m in all_metrics]) for s in strategies]

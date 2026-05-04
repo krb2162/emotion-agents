@@ -138,7 +138,7 @@ def main():
         '#9b59b6',  # Random — purple
         '#1abc9c',  # UCB1 — teal
         '#f39c12',  # Win-Rate Adaptive — yellow
-        '#95a5a6',  # Greedy — gray
+        '#e91e8c',  # Greedy — pink
     ]
 
     os.makedirs('results', exist_ok=True)
