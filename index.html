@@ -377,12 +377,18 @@
 <header>
   <h1>Emotion-Based Multi-Agent Resource Competition</h1>
   <p>
-    Agents with different strategies — <strong style="color:#4a90d9">Emotion</strong>,
-    <strong style="color:#e8a838">Priority Aging</strong>,
-    <strong style="color:#e05c5c">Exp Backoff</strong>, AIMD, Greedy, Random, UCB1, and
-    Win-Rate Adaptive — compete simultaneously for tiered resources. Each agent maintains
-    interpretable internal state that drives its decisions. Step through each tick to see
-    how agents decide, adapt, and compete.
+    Agents with different strategies —
+    <strong style="color:#4a90d9">Emotion</strong>,
+    <strong style="color:#e67e22">Priority Aging</strong>,
+    <strong style="color:#2ecc71">Exp Backoff</strong>,
+    <strong style="color:#e74c3c">AIMD</strong>,
+    <strong style="color:#95a5a6">Greedy</strong>,
+    <strong style="color:#9b59b6">Random</strong>,
+    <strong style="color:#1abc9c">UCB1</strong>, and
+    <strong style="color:#f39c12">Win-Rate Adaptive</strong>
+    — compete simultaneously for tiered resources. Each agent maintains interpretable
+    internal state that drives its decisions. Step through each tick to see how agents
+    decide, adapt, and compete.
   </p>
 </header>
 
@@ -420,6 +426,18 @@
 
     <!-- Agent cards -->
     <div class="agent-grid" id="agent-grid"></div>
+
+    <!-- Demo note -->
+    <div style="background:#1a1d27; border:1px solid #3e4260; border-radius:12px; padding:14px 20px; margin-bottom:24px; font-size:0.85rem; color:#8a8fa8; line-height:1.6;">
+      <strong style="color:#d0d4f0;">Note on the interactive demo above:</strong>
+      For clarity, the simulation visualizes three representative strategies —
+      <strong style="color:#4a90d9">Emotion</strong>,
+      <strong style="color:#e67e22">Priority Aging</strong>, and
+      <strong style="color:#2ecc71">Exp Backoff</strong> — rather than all eight used in the full
+      experiments. These three best illustrate the contrast between emotion-driven internal state,
+      aging-based priority escalation, and mechanical backoff. Full results for all eight strategies
+      are reported in the writeup and plots below.
+    </div>
 
     <!-- Writeup -->
     <div class="writeup">
@@ -510,8 +528,12 @@
       tier 3 with an exponential wait (2<sup>n</sup> ticks, capped at 16) after two or more losses.
       Any win resets the agent to tier 1. This mirrors backoff protocols in network congestion control.</p>
 
-      <p><strong>Round Robin</strong> assigns each agent a fixed turn at tier 1 in rotation.
-      Off-turn agents target tier 3. No adaptation, no state — purely mechanical fairness.</p>
+      <p><strong>AIMD, Greedy, Random, UCB1, and Win-Rate Adaptive</strong> are additional
+      baselines included in the full experiments. Greedy always bids at full speed for tier 1.
+      Random selects a tier and speed uniformly at random. UCB1 applies the multi-armed bandit
+      Upper Confidence Bound algorithm to tier selection. AIMD (additive increase, multiplicative
+      decrease) adjusts bid strength based on wins and losses. Win-Rate Adaptive tracks recent
+      win rate per tier and shifts toward the highest-performing tier over time.</p>
 
       <h2>4. Interpretability</h2>
       <p>
@@ -544,11 +566,11 @@
         We run two experiments. In the <strong>homogeneous experiment</strong>, all agents in a
         simulation use the same strategy. We test four emotion conditions (social awareness on/off
         × visibility blind/transparent) and seven baselines: Priority Aging, Exponential Backoff,
-        AIMD, Greedy, Random, UCB1, and Win-Rate Adaptive. In the <strong>mixed population
-        experiment</strong>, two agents of each of the eight strategies compete simultaneously in
-        the same simulation (16 total). Both experiments use 500 ticks and average results over 10
-        random seeds. Seeds vary agent attribute distributions (skill, regen rate, personality);
-        all other parameters are fixed.
+        AIMD, Greedy, Random, UCB1, and Win-Rate Adaptive. This uses 6 agents, 200 ticks, and
+        averages over 10 random seeds. In the <strong>mixed population experiment</strong>, two
+        agents of each of the eight strategies compete simultaneously in the same simulation (16
+        total), run for 500 ticks over 10 seeds. Seeds vary agent attribute distributions (skill,
+        regen rate, personality); all other parameters are fixed.
       </p>
       <p>
         We measure <strong>Jain's Fairness Index</strong> over total rewards (1.0 = perfectly equal,
@@ -558,34 +580,37 @@
 
       <h2>6. Results — Homogeneous Populations</h2>
       <p>
-        Both baselines use all three tiers in these results. Exponential backoff steps down
-        progressively (tier 1 → tier 2 → tier 3 wait). Priority aging uses MLFQ-style demotion.
-        This was a deliberate correction after observing that the original binary tier usage gave
-        emotion agents an unfair structural advantage.
+        6 agents, 200 ticks, 10 seeds. All baselines use all three tiers.
       </p>
       <table>
-        <tr><th>Condition</th><th>Jain's Fairness (mean ± std)</th><th>Starvation</th></tr>
-        <tr><td><span class="highlight">Emotion | Social | Blind</span></td><td>0.9416 ± 0.022</td><td>0.000</td></tr>
-        <tr><td>Emotion | Social | Transparent</td><td>0.9400 ± 0.023</td><td>0.000</td></tr>
-        <tr><td>Emotion | No Social | Transparent</td><td>0.9395 ± 0.015</td><td>0.000</td></tr>
-        <tr><td>Emotion | No Social | Blind</td><td>0.9270 ± 0.017</td><td>0.000</td></tr>
-        <tr><td>Baseline | Round Robin</td><td>0.9153 ± 0.001</td><td>0.000</td></tr>
-        <tr><td>Baseline | Priority Aging (MLFQ)</td><td>0.7991 ± 0.114</td><td>0.000</td></tr>
-        <tr><td>Baseline | Exp Backoff (tier-aware)</td><td>0.4221 ± 0.000</td><td>0.000</td></tr>
+        <tr><th>Condition</th><th>Jain's Fairness (mean ± std)</th><th>Starvation</th><th>Ideal Share Deviation</th></tr>
+        <tr><td><span class="highlight">Emotion | No Social | Transparent</span></td><td>0.9464 ± 0.020</td><td>0.000</td><td>~0.20</td></tr>
+        <tr><td>Emotion | Social | Transparent</td><td>0.9375 ± 0.025</td><td>0.000</td><td>~0.20</td></tr>
+        <tr><td>Emotion | Social | Blind</td><td>0.9340 ± 0.028</td><td>0.000</td><td>~0.20</td></tr>
+        <tr><td>Emotion | No Social | Blind</td><td>0.9301 ± 0.029</td><td>0.000</td><td>~0.20</td></tr>
+        <tr><td>Baseline | Priority Aging</td><td>0.7950 ± 0.117</td><td>0.000</td><td>~0.47</td></tr>
+        <tr><td>Baseline | Random</td><td>0.6870 ± 0.029</td><td>0.017</td><td>~0.52</td></tr>
+        <tr><td>Baseline | Win-Rate Adaptive</td><td>0.3966 ± 0.000</td><td>0.000</td><td>~0.88</td></tr>
+        <tr><td>Baseline | Exp Backoff</td><td>0.4205 ± 0.000</td><td>0.000</td><td>~0.85</td></tr>
+        <tr><td>Baseline | UCB1</td><td>0.3714 ± 0.000</td><td>0.500</td><td>~1.09</td></tr>
+        <tr><td>Baseline | AIMD</td><td>0.3626 ± 0.011</td><td>0.333</td><td>~0.97</td></tr>
+        <tr><td>Baseline | Greedy</td><td>0.1667 ± 0.000</td><td>0.833</td><td>~1.24</td></tr>
       </table>
       <p>
-        All four emotion conditions achieve 0.93–0.94 fairness with zero starvation across all seeds.
-        Round robin is competitive on fairness (0.92) but rigid — it does not adapt to agent state
-        and the highest-skill agent dominates off-turn tier 3 slots. Priority aging solves starvation
-        but produces inconsistent fairness (high variance ±0.11), because the winner's priority reset
-        creates instability. Exponential backoff fails the most — even with tier-aware stepping, the
-        highest-skill agent monopolizes tier 1.
+        All four emotion conditions achieve 0.93–0.95 fairness with zero starvation. Priority aging
+        is the best baseline on fairness (0.80) but with high variance (±0.12) due to instability
+        around the priority reset. Most other baselines cluster at 0.36–0.42 fairness and introduce
+        significant starvation — UCB1 starves half of agents, Greedy starves 83%. The ideal share
+        deviation column reveals a hidden cost of Priority Aging: its ~0.47 deviation is more than
+        double the emotion agents' ~0.20, because agents repeatedly collide on tier 1 and waste bids.
       </p>
       <p>
-        A counterintuitive finding: <strong>Social Blind (0.9416) slightly outperforms Social
-        Transparent (0.9400)</strong>. Seeing others' frustration causes agents to reduce their
-        speed preemptively, which reduces their bid strength without proportionally improving system
-        fairness. More information does not always produce better outcomes.
+        A counterintuitive finding: <strong>No Social | Transparent (0.9464) is the top-performing
+        condition</strong>, outperforming all social variants. Agents that can see others' frustration
+        but don't activate the social cost mechanic time their bids better without over-adjusting.
+        Adding social yielding on top of that visibility slightly hurts — agents back off more than
+        necessary, reducing their own bids without proportional fairness gains. More information is
+        not always better when coupled with a cooperative response mechanism.
       </p>
 
       <h2>7. Results — Mixed Population</h2>
