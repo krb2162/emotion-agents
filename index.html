@@ -378,10 +378,11 @@
   <h1>Emotion-Based Multi-Agent Resource Competition</h1>
   <p>
     Agents with different strategies — <strong style="color:#4a90d9">Emotion</strong>,
-    <strong style="color:#e8a838">Priority Aging</strong>, and
-    <strong style="color:#e05c5c">Exp Backoff</strong> — compete simultaneously for tiered
-    resources. Each agent maintains interpretable internal state that drives its decisions.
-    Step through each tick to see how agents decide, adapt, and compete.
+    <strong style="color:#e8a838">Priority Aging</strong>,
+    <strong style="color:#e05c5c">Exp Backoff</strong>, AIMD, Greedy, Random, UCB1, and
+    Win-Rate Adaptive — compete simultaneously for tiered resources. Each agent maintains
+    interpretable internal state that drives its decisions. Step through each tick to see
+    how agents decide, adapt, and compete.
   </p>
 </header>
 
@@ -542,11 +543,12 @@
       <p>
         We run two experiments. In the <strong>homogeneous experiment</strong>, all agents in a
         simulation use the same strategy. We test four emotion conditions (social awareness on/off
-        × visibility blind/transparent) and three baselines. In the <strong>mixed population
-        experiment</strong>, agents using all three strategies compete simultaneously in the same
-        simulation. Both experiments use 6 agents, 500 ticks, and average results over 10 random
-        seeds. Seeds vary agent attribute distributions (skill, regen rate, personality); all other
-        parameters are fixed.
+        × visibility blind/transparent) and seven baselines: Priority Aging, Exponential Backoff,
+        AIMD, Greedy, Random, UCB1, and Win-Rate Adaptive. In the <strong>mixed population
+        experiment</strong>, two agents of each of the eight strategies compete simultaneously in
+        the same simulation (16 total). Both experiments use 500 ticks and average results over 10
+        random seeds. Seeds vary agent attribute distributions (skill, regen rate, personality);
+        all other parameters are fixed.
       </p>
       <p>
         We measure <strong>Jain's Fairness Index</strong> over total rewards (1.0 = perfectly equal,
@@ -588,23 +590,28 @@
 
       <h2>7. Results — Mixed Population</h2>
       <p>
-        When all three strategies compete simultaneously (2 agents per strategy, 6 total, 500 ticks, 10 seeds):
+        When all eight strategies compete simultaneously (2 agents per strategy, 16 total, 500 ticks, 10 seeds).
+        Overall system fairness: <strong>0.2298 ± 0.062</strong>.
       </p>
       <table>
         <tr><th>Strategy</th><th>Mean Reward</th><th>Win Rate</th><th>Starvation</th></tr>
-        <tr><td><strong style="color:#e8a838">Priority Aging</strong></td><td>2028.8 ± 563</td><td>0.406 ± 0.113</td><td>0.000</td></tr>
-        <tr><td><strong style="color:#e05c5c">Exp Backoff</strong></td><td>1221.3 ± 450</td><td>0.474 ± 0.065</td><td>0.000</td></tr>
-        <tr><td><strong style="color:#4a90d9">Emotion</strong></td><td>694.0 ± 106</td><td>0.397 ± 0.001</td><td>0.000</td></tr>
+        <tr><td><strong>Greedy</strong></td><td>1767.0 ± 692.6</td><td>0.353 ± 0.139</td><td>0.550</td></tr>
+        <tr><td><strong>UCB1</strong></td><td>1205.2 ± 342.5</td><td>0.720 ± 0.165</td><td>0.000</td></tr>
+        <tr><td><strong style="color:#e8a838">Priority Aging</strong></td><td>665.5 ± 293.5</td><td>0.155 ± 0.042</td><td>0.000</td></tr>
+        <tr><td><strong>Win-Rate Adaptive</strong></td><td>349.1 ± 498.5</td><td>0.110 ± 0.134</td><td>0.750</td></tr>
+        <tr><td><strong>Random</strong></td><td>138.2 ± 164.6</td><td>0.096 ± 0.109</td><td>0.750</td></tr>
+        <tr><td><strong style="color:#4a90d9">Emotion</strong></td><td>114.9 ± 104.7</td><td>0.060 ± 0.054</td><td>0.900</td></tr>
+        <tr><td><strong style="color:#e05c5c">Exp Backoff</strong></td><td>3.2 ± 4.3</td><td>0.002 ± 0.002</td><td>1.000</td></tr>
+        <tr><td><strong>AIMD</strong></td><td>2.7 ± 2.0</td><td>0.001 ± 0.001</td><td>1.000</td></tr>
       </table>
       <p>
-        Overall system fairness collapses to <strong>0.6739 ± 0.097</strong> — far below the 0.93
-        seen in homogeneous emotion populations. Priority aging dominates on raw reward. Emotion
-        agents earn the least despite never starving and maintaining the tightest variance (±106 vs
-        ±563 for priority aging).
+        Overall system fairness collapses to <strong>0.23</strong> — far below the 0.93 seen in
+        homogeneous emotion populations. Greedy and UCB1 dominate, while Exp Backoff and AIMD
+        nearly starve out completely. Emotion agents earn little and experience 90% starvation.
       </p>
       <p>
         This reveals a <strong>cooperator-defector dynamic</strong>. When emotion agents get frustrated
-        and voluntarily migrate to lower tiers, priority aging agents accumulate priority at tier 1
+        and voluntarily migrate to lower tiers, aggressive strategies accumulate wins at tier 1
         unopposed. The social cost mechanic — designed to make dominant agents yield — causes emotion
         agents to yield to agents that never reciprocate. Emotional regulation is a <em>social
         contract</em>: it produces optimal fairness when all agents participate, but it is exploitable
@@ -810,6 +817,12 @@
 
       <p><strong>Emotion and Affect in Artificial Agents</strong></p>
       <ul>
+        <li><strong>Slade, S. (1993). <em>Goal-Based Decision Making: An Interpersonal Model</em>. Psychology Press.</strong><br>
+          Develops a computational model in which goals and interpersonal context (social relationships,
+          emotional stakes, anticipated reactions of others) are first-class inputs to decision making.
+          The social cost variable in this project directly implements this idea: it encodes the
+          interpersonal cost of dominance and feeds back into bid strength to produce voluntary yielding.
+          The emotion system as a whole can be read as a lightweight implementation of GBDM.</li>
         <li><strong>Picard, R. W. (1997). <em>Affective Computing</em>. MIT Press.</strong><br>
           Picard's foundational text argues that emotion functions as an internal regulatory mechanism,
           not merely a communication signal. This project draws on that regulatory view: frustration,
@@ -961,6 +974,10 @@ python run.py --seed 42 --explain</pre>
       <div class="plot-card">
         <h3>Individual Agent Rewards — Mixed Population</h3>
         <img src="results/mixed_reward_distribution.png" alt="Mixed reward distribution">
+      </div>
+      <div class="plot-card">
+        <h3>Scaling: Performance vs Number of Agents</h3>
+        <img src="results/scaling.png" alt="Scaling results">
       </div>
     </div>
 
