@@ -126,6 +126,7 @@ class Agent:
         # Capture pre-outcome state for accurate logging
         frustration_before = self.frustration
         social_cost_before = self.social_cost
+        tier_before = self.current_tier
 
         # Deduct energy
         energy_cost = self.speed_used * ENERGY_COST_RATE * self.max_energy
@@ -172,7 +173,7 @@ class Agent:
         self.reward_reinforcement *= 0.99
 
         self._log_state(won, reward if won else 0, frustration_before, social_cost_before,
-                        self.last_frustrated_action or 'normal')
+                        self.last_frustrated_action or 'normal', tier_before)
 
     def explain_last_decision(self):
         """Human-readable explanation of the most recent decision."""
@@ -244,9 +245,9 @@ class Agent:
             self.p_stay /= total
             self.p_give_up /= total
 
-    def _log_state(self, won, reward, frustration_before, social_cost_before, action):
+    def _log_state(self, won, reward, frustration_before, social_cost_before, action, tier_before):
         self.state_log.append({
-            'tier': self.current_tier,
+            'tier': tier_before,
             'speed': round(self.speed_used, 3),
             'bid': round(self.compute_bid(), 3),
             'won': won,

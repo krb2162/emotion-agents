@@ -1,19 +1,20 @@
 # Literature Review: Emotion-Based Multi-Agent Resource Competition
 
-CS 5580 Final Project — Annotated Bibliography
-
 This review covers four areas relevant to the project: (1) emotion and affect in AI agents,
 (2) fairness and starvation in resource allocation, (3) classical scheduling strategies used
 as baselines, and (4) cooperation and defection in multi-agent systems.
 
 ---
+TODO: add Stephen Slade's book!!
+TODO: check all citations
+TODO: edit AI writing to not include ' -- ' 
 
 ## 1. Emotion and Affect in Artificial Agents
 
 **Picard, R. W. (1997). *Affective Computing*. MIT Press.**
 
 Picard's foundational text argues that emotion is not peripheral to intelligence but central
-to it — that systems capable of recognizing, expressing, and having functionally emotional
+to it, that systems capable of recognizing, expressing, and having functionally emotional
 states will be more adaptive and effective. The book distinguishes between emotion as a
 communication signal and emotion as an internal regulatory mechanism. This project draws
 directly on the regulatory view: frustration, reward reinforcement, and social cost are not

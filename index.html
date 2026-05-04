@@ -763,6 +763,25 @@
         cooperation, and in homogeneous conditions the answer is clearly yes.
       </p>
       <p>
+        A key architectural property of the emotion agent — and particularly its blind variant — is
+        that it requires <strong>zero shared knowledge</strong>. Blind emotion agents make every
+        decision using only their own internal state: no knowledge of other agents' identities,
+        counts, or frustration levels; no synchronized clock; no message passing; no shared memory.
+        This makes them fully decentralized and capable of operating asynchronously, in contrast to
+        every baseline tested.
+      </p>
+      <p>
+        Of the baselines evaluated — exponential backoff, priority aging, and round robin —
+        <strong>only round robin achieves higher fairness</strong> (1.0000 vs. 0.9416 for blind emotion agents).
+        But round robin's perfect score requires central orchestration: a pre-agreed agent index
+        assignment, knowledge of total population size, and a synchronized tick counter so all
+        agents know whose turn it is. Remove any of these requirements and round robin breaks down.
+        Exponential backoff and priority aging both fall below emotion agents on Jain's fairness
+        index despite having no such coordination constraints. Blind emotion agents are therefore
+        the <strong>highest-performing fully decentralized strategy</strong> tested — achieving
+        near-perfect fairness with no infrastructure beyond each agent's own memory of outcomes.
+      </p>
+      <p>
         The interpretability of the system is a significant advantage regardless of fairness outcomes.
         Every decision has a traceable cause in the agent's internal state. This property does not
         hold for priority aging or backoff, which produce outcomes without any agent-level explanation

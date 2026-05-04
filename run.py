@@ -19,7 +19,8 @@ import random
 import matplotlib.pyplot as plt
 
 from agents import Agent
-from baselines import ExponentialBackoffAgent, RoundRobinAgent, PriorityAgingAgent
+from baselines import (ExponentialBackoffAgent, RoundRobinAgent, PriorityAgingAgent,
+                       AIMDAgent, GreedyAgent, RandomAgent, UCB1Agent, WinRateAdaptiveAgent)
 from simulation import Simulation
 from metrics import compute_all, frustration_over_time
 
@@ -61,6 +62,51 @@ def make_priority_aging_agents(n, seed=None):
     agents = []
     for i in range(n):
         agents.append(PriorityAgingAgent(
+            agent_id=i,
+            skill_level=round(rng.uniform(0.4, 1.0), 2),
+            regen_rate=round(rng.uniform(5.0, 20.0), 1),
+            max_energy=100.0,
+        ))
+    return agents
+
+
+def make_greedy_agents(n, seed=None):
+    rng = random.Random(seed)
+    return [GreedyAgent(agent_id=i,
+                        skill_level=round(rng.uniform(0.4, 1.0), 2),
+                        regen_rate=round(rng.uniform(5.0, 20.0), 1),
+                        max_energy=100.0) for i in range(n)]
+
+
+def make_random_agents(n, seed=None):
+    rng = random.Random(seed)
+    return [RandomAgent(agent_id=i,
+                        skill_level=round(rng.uniform(0.4, 1.0), 2),
+                        regen_rate=round(rng.uniform(5.0, 20.0), 1),
+                        max_energy=100.0) for i in range(n)]
+
+
+def make_ucb1_agents(n, seed=None):
+    rng = random.Random(seed)
+    return [UCB1Agent(agent_id=i,
+                      skill_level=round(rng.uniform(0.4, 1.0), 2),
+                      regen_rate=round(rng.uniform(5.0, 20.0), 1),
+                      max_energy=100.0) for i in range(n)]
+
+
+def make_winrate_agents(n, seed=None):
+    rng = random.Random(seed)
+    return [WinRateAdaptiveAgent(agent_id=i,
+                                 skill_level=round(rng.uniform(0.4, 1.0), 2),
+                                 regen_rate=round(rng.uniform(5.0, 20.0), 1),
+                                 max_energy=100.0) for i in range(n)]
+
+
+def make_aimd_agents(n, seed=None):
+    rng = random.Random(seed)
+    agents = []
+    for i in range(n):
+        agents.append(AIMDAgent(
             agent_id=i,
             skill_level=round(rng.uniform(0.4, 1.0), 2),
             regen_rate=round(rng.uniform(5.0, 20.0), 1),
@@ -138,7 +184,9 @@ def print_aggregate(name, fairness_list, starvation_list):
 
 
 def plot_results_aggregate(condition_names, fairness_means, fairness_stds,
-                           starvation_means, starvation_stds, save_dir='results'):
+                           starvation_means, starvation_stds,
+                           deviation_means=None, deviation_stds=None,
+                           save_dir='results'):
     os.makedirs(save_dir, exist_ok=True)
     short_names = [n.replace('Emotion | ', '').replace('Baseline | ', '')
                    for n in condition_names]
@@ -147,7 +195,8 @@ def plot_results_aggregate(condition_names, fairness_means, fairness_stds,
     colors = ['steelblue' if n.startswith('Emotion') else 'tomato'
               for n in condition_names]
 
-    fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+    ncols = 3 if deviation_means is not None else 2
+    fig, axes = plt.subplots(1, ncols, figsize=(7 * ncols, 5))
     fig.suptitle('Emotion-Based vs Baseline Resource Competition (mean ± std)', fontsize=13)
 
     axes[0].bar(x, fairness_means, yerr=fairness_stds, color=colors,
@@ -166,6 +215,15 @@ def plot_results_aggregate(condition_names, fairness_means, fairness_stds,
     axes[1].set_xticks(list(x))
     axes[1].set_xticklabels(short_names, rotation=20, ha='right')
 
+    if deviation_means is not None:
+        dev_stds = deviation_stds if deviation_stds is not None else [0] * len(deviation_means)
+        axes[2].bar(x, deviation_means, yerr=dev_stds, color=colors,
+                    capsize=5, error_kw={'linewidth': 1.5})
+        axes[2].set_title("Ideal Share Deviation (lower = more efficient)")
+        axes[2].set_ylabel("Mean Abs Deviation from Ideal (fraction)")
+        axes[2].set_xticks(list(x))
+        axes[2].set_xticklabels(short_names, rotation=20, ha='right')
+
     from matplotlib.patches import Patch
     legend = [Patch(color='steelblue', label='Emotion'), Patch(color='tomato', label='Baseline')]
     fig.legend(handles=legend, loc='upper right', fontsize=9)
@@ -183,9 +241,10 @@ def plot_results(all_results, history_map, save_dir='results'):
     names = [r['name'] for r in all_results]
     fairness = [r['jains_fairness'] for r in all_results]
     starvation = [r['starvation_rate'] for r in all_results]
+    deviation = [r['ideal_share_deviation'] for r in all_results]
 
-    # --- Bar chart: fairness and starvation ---
-    fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+    # --- Bar chart: fairness, starvation, ideal share deviation ---
+    fig, axes = plt.subplots(1, 3, figsize=(21, 5))
     fig.suptitle('Emotion-Based vs Baseline Resource Competition', fontsize=13)
 
     short_names = [n.replace('Emotion | ', '').replace('Baseline | ', '') for n in names]
@@ -202,8 +261,13 @@ def plot_results(all_results, history_map, save_dir='results'):
     axes[1].set_ylabel("Fraction of Agents Starved")
     axes[1].tick_params(axis='x', rotation=20)
 
+    axes[2].bar(short_names, deviation, color='mediumpurple')
+    axes[2].set_title("Ideal Share Deviation (lower = more efficient)")
+    axes[2].set_ylabel("Mean Abs Deviation from Ideal (fraction)")
+    axes[2].tick_params(axis='x', rotation=20)
+
     plt.tight_layout()
-    path = os.path.join(save_dir, 'comparison.png')
+    path = os.path.join(save_dir, 'single_seed_comparison.png')
     plt.savefig(path, dpi=150)
     plt.close()
     print(f"\nSaved: {path}")
@@ -272,7 +336,11 @@ CONDITION_SPECS = [
     ('Emotion | Social | Transparent',    'emotion',  True,  'transparent'),
     ('Baseline | Priority Aging',         'aging',    False, 'blind'),
     ('Baseline | Exp Backoff',            'backoff',  False, 'blind'),
-    ('Baseline | Round Robin',            'rr',       False, 'blind'),
+    ('Baseline | AIMD',                   'aimd',     False, 'blind'),
+    ('Baseline | Greedy',                 'greedy',   False, 'blind'),
+    ('Baseline | Random',                 'random',   False, 'blind'),
+    ('Baseline | UCB1',                   'ucb1',     False, 'blind'),
+    ('Baseline | Win-Rate Adaptive',      'winrate',  False, 'blind'),
 ]
 
 
@@ -283,6 +351,16 @@ def make_agents(kind, n, seed):
         return make_backoff_agents(n, seed)
     elif kind == 'aging':
         return make_priority_aging_agents(n, seed)
+    elif kind == 'aimd':
+        return make_aimd_agents(n, seed)
+    elif kind == 'greedy':
+        return make_greedy_agents(n, seed)
+    elif kind == 'random':
+        return make_random_agents(n, seed)
+    elif kind == 'ucb1':
+        return make_ucb1_agents(n, seed)
+    elif kind == 'winrate':
+        return make_winrate_agents(n, seed)
     else:
         return make_rr_agents(n, seed)
 
@@ -341,8 +419,9 @@ def main():
           f"({n} agents, {ticks} ticks each)...\n")
 
     # Accumulate per-condition results across seeds
-    condition_fairness  = {name: [] for name, *_ in CONDITION_SPECS}
+    condition_fairness   = {name: [] for name, *_ in CONDITION_SPECS}
     condition_starvation = {name: [] for name, *_ in CONDITION_SPECS}
+    condition_deviation  = {name: [] for name, *_ in CONDITION_SPECS}
     # Keep last seed's history for plots
     last_history_map = {}
     last_results_list = []
@@ -357,6 +436,7 @@ def main():
             )
             condition_fairness[name].append(results['jains_fairness'])
             condition_starvation[name].append(results['starvation_rate'])
+            condition_deviation[name].append(results['ideal_share_deviation'])
             seed_results.append(results)
             if seed == seeds[-1]:
                 last_history_map[name] = history
@@ -376,14 +456,15 @@ def main():
     fairness_stds   = [std(condition_fairness[n])    for n in condition_names]
     starv_means     = [mean(condition_starvation[n]) for n in condition_names]
     starv_stds      = [std(condition_starvation[n])  for n in condition_names]
+    dev_means       = [mean(condition_deviation[n])  for n in condition_names]
+    dev_stds        = [std(condition_deviation[n])   for n in condition_names]
 
-    for name, fm, fs, sm, ss in zip(condition_names, fairness_means, fairness_stds,
-                                     starv_means, starv_stds):
+    for name in condition_names:
         print_aggregate(name, condition_fairness[name], condition_starvation[name])
 
     # Plots: error bars from multi-seed + frustration/tier from last seed
     plot_results_aggregate(condition_names, fairness_means, fairness_stds,
-                           starv_means, starv_stds)
+                           starv_means, starv_stds, dev_means, dev_stds)
     plot_results(last_results_list, last_history_map)
 
 
