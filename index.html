@@ -382,7 +382,7 @@
     <strong style="color:#e67e22">Priority Aging</strong>,
     <strong style="color:#2ecc71">Exp Backoff</strong>,
     <strong style="color:#e74c3c">AIMD</strong>,
-    <strong style="color:#e91e8c">Greedy</strong>,
+    <strong style="color:#ff7043">Greedy</strong>,
     <strong style="color:#9b59b6">Random</strong>,
     <strong style="color:#1abc9c">UCB1</strong>, and
     <strong style="color:#f39c12">Win-Rate Adaptive</strong>
@@ -494,7 +494,7 @@
         <tr><td><strong style="color:#e67e22">Priority Aging</strong></td><td>Priority score grows each tick without a win; resets on win. Higher priority → higher tier target.</td></tr>
         <tr><td><strong style="color:#2ecc71">Exp Backoff</strong></td><td>After consecutive losses, waits exponentially longer before retrying a tier.</td></tr>
         <tr><td><strong style="color:#e74c3c">AIMD</strong></td><td>Additively increases bid aggressiveness on success; halves it on collision (like TCP congestion control).</td></tr>
-        <tr><td><strong style="color:#e91e8c">Greedy</strong></td><td>Always targets Tier 1 at full speed. No adaptation.</td></tr>
+        <tr><td><strong style="color:#ff7043">Greedy</strong></td><td>Always targets Tier 1 at full speed. No adaptation.</td></tr>
         <tr><td><strong style="color:#9b59b6">Random</strong></td><td>Picks a tier uniformly at random each tick.</td></tr>
         <tr><td><strong style="color:#1abc9c">UCB1</strong></td><td>Treats tiers as bandit arms; selects the tier with the highest upper confidence bound on reward.</td></tr>
         <tr><td><strong style="color:#f39c12">Win-Rate Adaptive</strong></td><td>Shifts tier target based on recent win rate per tier.</td></tr>
@@ -644,7 +644,7 @@ deviation = mean(|rᵢ - ideal|) / ideal</pre>
       </p>
       <table>
         <tr><th>Strategy</th><th>Mean Reward</th><th>Win Rate</th><th>Starvation</th></tr>
-        <tr><td><strong style="color:#e91e8c">Greedy</strong></td><td>1767.0 ± 692.6</td><td>0.353 ± 0.139</td><td>0.550</td></tr>
+        <tr><td><strong style="color:#ff7043">Greedy</strong></td><td>1767.0 ± 692.6</td><td>0.353 ± 0.139</td><td>0.550</td></tr>
         <tr><td><strong style="color:#1abc9c">UCB1</strong></td><td>1205.2 ± 342.5</td><td>0.720 ± 0.165</td><td>0.000</td></tr>
         <tr><td><strong style="color:#e67e22">Priority Aging</strong></td><td>665.5 ± 293.5</td><td>0.155 ± 0.042</td><td>0.000</td></tr>
         <tr><td><strong style="color:#f39c12">Win-Rate Adaptive</strong></td><td>349.1 ± 498.5</td><td>0.110 ± 0.134</td><td>0.750</td></tr>
